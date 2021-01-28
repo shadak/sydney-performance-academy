@@ -1,0 +1,31 @@
+{
+  "name": "sydney-performance-academy",
+  "version": "1.0.0",
+  "description": "SPA E-Learning Web App",
+  "main": "index.tsx",
+  "repository": "https://github.com/shadak/sydney-performance-academy.git",
+  "author": "Jack Bennett",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.14.1",
+    "@typescript-eslint/parser": "^4.14.1",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^2.2.1",
+    "typescript": "^4.1.3"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.1.4",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  },
+  "scripts": {
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "dev": "parcel ./src/index.html --open"
+  }
+}
