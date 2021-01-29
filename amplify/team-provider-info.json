@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-sydneyperformance-dev-145209-authRole",
+      "UnauthRoleArn": "arn:aws:iam::373791354000:role/amplify-sydneyperformance-dev-145209-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::373791354000:role/amplify-sydneyperformance-dev-145209-authRole",
+      "Region": "ap-southeast-1",
+      "DeploymentBucketName": "amplify-sydneyperformance-dev-145209-deployment",
+      "UnauthRoleName": "amplify-sydneyperformance-dev-145209-unauthRole",
+      "StackName": "amplify-sydneyperformance-dev-145209",
+      "StackId": "arn:aws:cloudformation:ap-southeast-1:373791354000:stack/amplify-sydneyperformance-dev-145209/34708520-611c-11eb-b220-0627116e656a",
+      "AmplifyAppId": "d3abcosda16ie"
+    },
+    "categories": {
+      "auth": {
+        "sydneyperformanced2a5c6ac": {}
+      }
+    }
+  }
+}

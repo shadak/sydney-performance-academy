@@ -1,0 +1,11 @@
+{
+    "AppSyncApiName": "sydneyperformance",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": false,
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authsydneyperformanced2a5c6ac",
+            "Outputs.UserPoolId"
+        ]
+    }
+}
