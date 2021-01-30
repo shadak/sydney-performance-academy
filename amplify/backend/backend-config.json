@@ -5,6 +5,22 @@
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "customAuth": false
+    },
+    "userPoolGroups": {
+      "service": "Cognito-UserPool-Groups",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "sydneyperformanced2a5c6ac",
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ]
+        }
+      ]
     }
   },
   "api": {
@@ -22,6 +38,13 @@
           "additionalAuthenticationProviders": []
         }
       }
+    }
+  },
+  "video": {
+    "lessonstreams": {
+      "service": "video",
+      "serviceType": "video-on-demand",
+      "providerPlugin": "awscloudformation"
     }
   }
 }

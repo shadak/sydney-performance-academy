@@ -4,6 +4,7 @@ import React from 'react'
 import { RouteComponentProps } from '@reach/router'
 import useInput from '../hooks/useInput'
 import useFileInput from '../hooks/useFileInput'
+import { createLesson } from '~/api/lesson'
 
 type SubmitHandler = (event: React.FormEvent<HTMLFormElement>) => void
 
@@ -14,11 +15,15 @@ const Admin: React.FC<RouteComponentProps> = (props) => {
   const [description , descriptionChange] = useInput('')
   const [file, fileInputClick] = useFileInput()
 
+  const handleProgress = (progress: any) => {
+    console.log(progress)
+  }
+
   const handleLessonSubmit: SubmitHandler = async (e) => {
     e.preventDefault()
-    console.log({file})
-    console.log({title})
-    console.log({description})
+    if (file) {
+      createLesson({ title, description, file}, handleProgress)
+    }
   }
 
   return (

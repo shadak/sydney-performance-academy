@@ -1,17 +1,13 @@
-type Task
-  @model
-  @auth(
-    rules: [
-      { allow: groups, groups: ["Managers"], queries: null, mutations: [create, update, delete] }
-      { allow: groups, groups: ["Employees"], queries: [get, list], mutations: null }
-    ]
-  ) {
+type lesson @model
+@auth(
+  rules: [
+    {allow: groups, groups:["Admin"], operations: [create, update, delete, read]},
+    {allow: groups, groupsField: "userpools", operations: [read]}
+  ]
+)
+{
   id: ID!
   title: String!
-  description: String
-  status: String
-}
-type PrivateNote @model @auth(rules: [{ allow: owner }]) {
-  id: ID!
-  content: String!
+  description: String!
+  userpools: [String]
 }
