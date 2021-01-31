@@ -20,9 +20,9 @@ export interface LessonInput extends CreateLessonInput {
 }
 
 // Replace the 'any' here, may need to create my own type
-type CreateLesson = (input: LessonInput, progressCallback: (progress: any) => void) => Promise<Lesson | undefined>
-type GetLesson = (id: string) => Promise<Lesson | undefined>
-type ListLessons = () => Promise<Lesson[] | undefined>
+export type CreateLesson = (input: LessonInput, progressCallback: (progress: any) => void) => Promise<Lesson | undefined>
+export type GetLesson = (id: string) => Promise<Lesson | undefined>
+export type ListLessons = () => Promise<Lesson[] | undefined>
 
 export const createLesson: CreateLesson = async (input, progressCallback) => {
   try {
@@ -95,6 +95,25 @@ export const listLessons: ListLessons = async () => {
     console.error(e)
   }
   return
+}
+
+// TODO: Try catch block and handle error here.
+
+export const getLessonThumbnail = async (id: string) => {
+  
+  const region = config.aws_project_region
+  Storage.configure({
+    AWSS3: {
+      bucket: videoConfig.awsOutputVideo,
+      region,
+      customPrefix: {
+        public: '',
+      },
+    },
+  })
+  const signedUrl = await Storage.get(`${id}/${id}_thumbnail.0000000.jpg`)
+
+  return signedUrl
 }
 
 
