@@ -8,7 +8,7 @@ interface Value {
 
 const cache = new LRU<string, Value>(50)
 
-const usePromiseSuspense = (f: Function, parameters: Array<any>) => {
+const usePromiseSuspense = <T extends Function, U>(f: T, parameters: any[]): U => {
   const key: string = md5(f.toString() + JSON.stringify(parameters))
   const value: Value = cache.get(key) || { resolved: false, data: null }
   
