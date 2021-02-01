@@ -5,6 +5,7 @@ import { RouteComponentProps } from '@reach/router'
 import useInput from '../hooks/useInput'
 import useFileInput from '../hooks/useFileInput'
 import { createLesson } from '~/api/lesson'
+import { listUsersInGroup } from '~/api/admin'
 
 type SubmitHandler = (event: React.FormEvent<HTMLFormElement>) => void
 
@@ -25,6 +26,8 @@ const Admin: React.FC<RouteComponentProps> = (props) => {
       createLesson({ title, description, file}, handleProgress)
     }
   }
+
+  listUsersInGroup('Admin').then((users) => {console.log(users[0].Username)})
 
   return (
     <div>

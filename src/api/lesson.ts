@@ -100,7 +100,6 @@ export const listLessons: ListLessons = async () => {
 // TODO: Try catch block and handle error here.
 
 export const getLessonThumbnail = async (id: string) => {
-  
   const region = config.aws_project_region
   Storage.configure({
     AWSS3: {
