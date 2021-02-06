@@ -68,14 +68,17 @@ export type DeleteLessonInput = {
   id?: string | null,
 };
 
-export type ModellessonFilterInput = {
-  id?: ModelIDInput | null,
-  title?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  userpools?: ModelStringInput | null,
-  and?: Array< ModellessonFilterInput | null > | null,
-  or?: Array< ModellessonFilterInput | null > | null,
-  not?: ModellessonFilterInput | null,
+export type CreateSubmissionInput = {
+  id?: string | null,
+  owner?: string | null,
+  lessonId: string,
+};
+
+export type ModelsubmissionConditionInput = {
+  lessonId?: ModelIDInput | null,
+  and?: Array< ModelsubmissionConditionInput | null > | null,
+  or?: Array< ModelsubmissionConditionInput | null > | null,
+  not?: ModelsubmissionConditionInput | null,
 };
 
 export type ModelIDInput = {
@@ -94,6 +97,35 @@ export type ModelIDInput = {
   size?: ModelSizeInput | null,
 };
 
+export type UpdateSubmissionInput = {
+  id: string,
+  owner?: string | null,
+  lessonId?: string | null,
+};
+
+export type DeleteSubmissionInput = {
+  id?: string | null,
+};
+
+export type ModellessonFilterInput = {
+  id?: ModelIDInput | null,
+  title?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  userpools?: ModelStringInput | null,
+  and?: Array< ModellessonFilterInput | null > | null,
+  or?: Array< ModellessonFilterInput | null > | null,
+  not?: ModellessonFilterInput | null,
+};
+
+export type ModelsubmissionFilterInput = {
+  id?: ModelIDInput | null,
+  owner?: ModelStringInput | null,
+  lessonId?: ModelIDInput | null,
+  and?: Array< ModelsubmissionFilterInput | null > | null,
+  or?: Array< ModelsubmissionFilterInput | null > | null,
+  not?: ModelsubmissionFilterInput | null,
+};
+
 export type CreateLessonMutationVariables = {
   input: CreateLessonInput,
   condition?: ModellessonConditionInput | null,
@@ -106,6 +138,10 @@ export type CreateLessonMutation = {
     title: string,
     description: string,
     userpools: Array< string | null > | null,
+    submissions:  {
+      __typename: "ModelsubmissionConnection",
+      nextToken: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -123,6 +159,10 @@ export type UpdateLessonMutation = {
     title: string,
     description: string,
     userpools: Array< string | null > | null,
+    submissions:  {
+      __typename: "ModelsubmissionConnection",
+      nextToken: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -140,6 +180,58 @@ export type DeleteLessonMutation = {
     title: string,
     description: string,
     userpools: Array< string | null > | null,
+    submissions:  {
+      __typename: "ModelsubmissionConnection",
+      nextToken: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateSubmissionMutationVariables = {
+  input: CreateSubmissionInput,
+  condition?: ModelsubmissionConditionInput | null,
+};
+
+export type CreateSubmissionMutation = {
+  createSubmission:  {
+    __typename: "submission",
+    id: string,
+    owner: string | null,
+    lessonId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateSubmissionMutationVariables = {
+  input: UpdateSubmissionInput,
+  condition?: ModelsubmissionConditionInput | null,
+};
+
+export type UpdateSubmissionMutation = {
+  updateSubmission:  {
+    __typename: "submission",
+    id: string,
+    owner: string | null,
+    lessonId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteSubmissionMutationVariables = {
+  input: DeleteSubmissionInput,
+  condition?: ModelsubmissionConditionInput | null,
+};
+
+export type DeleteSubmissionMutation = {
+  deleteSubmission:  {
+    __typename: "submission",
+    id: string,
+    owner: string | null,
+    lessonId: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -156,6 +248,10 @@ export type GetLessonQuery = {
     title: string,
     description: string,
     userpools: Array< string | null > | null,
+    submissions:  {
+      __typename: "ModelsubmissionConnection",
+      nextToken: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -183,6 +279,42 @@ export type ListLessonsQuery = {
   } | null,
 };
 
+export type GetSubmissionQueryVariables = {
+  id: string,
+};
+
+export type GetSubmissionQuery = {
+  getSubmission:  {
+    __typename: "submission",
+    id: string,
+    owner: string | null,
+    lessonId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListSubmissionsQueryVariables = {
+  filter?: ModelsubmissionFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListSubmissionsQuery = {
+  listSubmissions:  {
+    __typename: "ModelsubmissionConnection",
+    items:  Array< {
+      __typename: "submission",
+      id: string,
+      owner: string | null,
+      lessonId: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
 export type OnCreateLessonSubscription = {
   onCreateLesson:  {
     __typename: "lesson",
@@ -190,6 +322,10 @@ export type OnCreateLessonSubscription = {
     title: string,
     description: string,
     userpools: Array< string | null > | null,
+    submissions:  {
+      __typename: "ModelsubmissionConnection",
+      nextToken: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -202,6 +338,10 @@ export type OnUpdateLessonSubscription = {
     title: string,
     description: string,
     userpools: Array< string | null > | null,
+    submissions:  {
+      __typename: "ModelsubmissionConnection",
+      nextToken: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -214,6 +354,55 @@ export type OnDeleteLessonSubscription = {
     title: string,
     description: string,
     userpools: Array< string | null > | null,
+    submissions:  {
+      __typename: "ModelsubmissionConnection",
+      nextToken: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateSubmissionSubscriptionVariables = {
+  owner?: string | null,
+};
+
+export type OnCreateSubmissionSubscription = {
+  onCreateSubmission:  {
+    __typename: "submission",
+    id: string,
+    owner: string | null,
+    lessonId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateSubmissionSubscriptionVariables = {
+  owner?: string | null,
+};
+
+export type OnUpdateSubmissionSubscription = {
+  onUpdateSubmission:  {
+    __typename: "submission",
+    id: string,
+    owner: string | null,
+    lessonId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteSubmissionSubscriptionVariables = {
+  owner?: string | null,
+};
+
+export type OnDeleteSubmissionSubscription = {
+  onDeleteSubmission:  {
+    __typename: "submission",
+    id: string,
+    owner: string | null,
+    lessonId: string,
     createdAt: string,
     updatedAt: string,
   } | null,

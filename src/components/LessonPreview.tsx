@@ -3,6 +3,7 @@ import React from 'react'
 import usePromiseSuspense from '../hooks/usePromiseSuspense'
 import { getLessonThumbnail, Lesson } from '~/api/lesson'
 import { css, jsx } from '@emotion/react'
+import { Link } from '@reach/router'
 
 
 interface LessonPreviewProps {
@@ -19,7 +20,7 @@ const LessonPreview: React.FC<LessonPreviewProps> = (props) => {
   return (
     <div>
       <img src={url} css={imageStyle}/>
-      <div>{lesson.title}</div>
+      <Link to={`/lesson/${lesson.id}`}>{lesson.title}</Link>
       <div>{lesson.description}</div>
     </div>
   )

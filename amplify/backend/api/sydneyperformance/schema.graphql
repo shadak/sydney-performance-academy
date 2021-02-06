@@ -2,7 +2,7 @@ type lesson @model
 @auth(
   rules: [
     {allow: groups, groups:["Admin"], operations: [create, update, delete, read]},
-    {allow: groups, groupsField: "userpools", operations: [read]}
+    {allow: groups, groupsField: "userpools", operations: [read]},
   ]
 )
 {
@@ -10,4 +10,19 @@ type lesson @model
   title: String!
   description: String!
   userpools: [String]
+  submissions: [submission] @connection(keyName: "byLesson", fields: ["id"])
+}
+
+type submission @model
+@auth(
+  rules: [
+    {allow: groups, groups:["Admin"], operations: [create, update, delete, read]},
+    { allow: owner, ownerField: "owner", operations: [create, read] },
+  ]
+)
+@key(name: "byLesson", fields: ["lessonId"])
+{
+  id: ID!
+  owner: String
+  lessonId: ID!
 }

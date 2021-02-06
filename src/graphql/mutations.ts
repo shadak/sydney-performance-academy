@@ -12,6 +12,9 @@ export const createLessonGQL = /* GraphQL */ `
       title
       description
       userpools
+      submissions {
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -27,13 +30,16 @@ export const updateLessonGQL = /* GraphQL */ `
       title
       description
       userpools
+      submissions {
+        nextToken
+      }
       createdAt
       updatedAt
     }
   }
 `;
 export const deleteLessonGQL = /* GraphQL */ `
-  mutation DeleteLessonGQL(
+  mutation DeleteLesson(
     $input: DeleteLessonInput!
     $condition: ModellessonConditionInput
   ) {
@@ -42,6 +48,51 @@ export const deleteLessonGQL = /* GraphQL */ `
       title
       description
       userpools
+      submissions {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createSubmissionGQL = /* GraphQL */ `
+  mutation CreateSubmission(
+    $input: CreateSubmissionInput!
+    $condition: ModelsubmissionConditionInput
+  ) {
+    createSubmission(input: $input, condition: $condition) {
+      id
+      owner
+      lessonId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateSubmissionGQL = /* GraphQL */ `
+  mutation UpdateSubmission(
+    $input: UpdateSubmissionInput!
+    $condition: ModelsubmissionConditionInput
+  ) {
+    updateSubmission(input: $input, condition: $condition) {
+      id
+      owner
+      lessonId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteSubmissionGQL = /* GraphQL */ `
+  mutation DeleteSubmission(
+    $input: DeleteSubmissionInput!
+    $condition: ModelsubmissionConditionInput
+  ) {
+    deleteSubmission(input: $input, condition: $condition) {
+      id
+      owner
+      lessonId
       createdAt
       updatedAt
     }

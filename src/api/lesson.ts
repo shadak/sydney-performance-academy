@@ -1,28 +1,30 @@
 import { createLessonGQL } from './../graphql/mutations';
-import { CreateLessonInput, CreateLessonMutation, GetLessonQuery, ListLessonsQuery } from './API'
+import { CreateLessonInput, CreateLessonMutation, CreateLessonMutationVariables, GetLessonQuery, GetLessonQueryVariables, ListLessonsQuery } from './API'
 import { getLessonGQL, listLessonsGQL } from './../graphql/queries'
 import { Storage, API, graphqlOperation } from "aws-amplify"
 import { GraphQLResult } from "@aws-amplify/api"
-import videoConfig from '../aws-video-exports'
+import { lessonStreamConfig } from '../aws-video-exports'
 import config from '../aws-exports'
 import { v4 } from 'uuid'
 
-export interface Lesson {
-   id?: string,
-   title?: string,
-   description?: string,
-   createdAt?: string,
-   updatedAt?: string,
-}
-
-export interface LessonInput extends CreateLessonInput {
+export type Lesson = Exclude<GetLessonQuery['getLesson'], null>
+export type LessonList = Exclude<ListLessonsQuery['listLessons'], null>['items']
+export type LessonInput = CreateLessonInput & {
   file: File
 }
+export interface CreateLesson {
+  (input: LessonInput, progressCallback: (progress: any) => void): Promise<Lesson | undefined>
+}
+export interface GetLesson {
+  (id: string): Promise<Lesson | undefined>
+}
+export interface ListLessons {
+  (): Promise<LessonList | undefined>
+}
 
-// Replace the 'any' here, may need to create my own type
-export type CreateLesson = (input: LessonInput, progressCallback: (progress: any) => void) => Promise<Lesson | undefined>
-export type GetLesson = (id: string) => Promise<Lesson | undefined>
-export type ListLessons = () => Promise<Lesson[] | undefined>
+export interface GetS3SignedUrl {
+  (id: string): Promise<String | Object>
+}
 
 export const createLesson: CreateLesson = async (input, progressCallback) => {
   try {
@@ -30,7 +32,7 @@ export const createLesson: CreateLesson = async (input, progressCallback) => {
     const region = config.aws_project_region
     Storage.configure({
       AWSS3: {
-        bucket: videoConfig.awsInputVideo,
+        bucket: lessonStreamConfig.awsInputVideo,
         region,
         customPrefix: {
           public: '',
@@ -39,25 +41,24 @@ export const createLesson: CreateLesson = async (input, progressCallback) => {
     })
     const id = v4()
     const fileExtension = file.name.split('.')[1]
-    const lessonInput = {
-      id,
-      title,
-      description
+    const mutationVariables: CreateLessonMutationVariables = {
+        input: {
+        id,
+        title,
+        description
+      }
     }
-    const { data } = ( 
-      await API.graphql(graphqlOperation(createLessonGQL, { input: lessonInput }))
+    const result = ( 
+      await API.graphql(graphqlOperation(createLessonGQL, mutationVariables))
     ) as GraphQLResult<CreateLessonMutation>
-    const lesson = {
-      id: data?.createLesson?.id, 
-      title: data?.createLesson?.title, 
-      description: data?.createLesson?.description
-    }
 
     Storage.put(`${id}.${fileExtension}`, file, {
       progressCallback,
       contentType: 'video/*'
     })
-    return lesson
+    if (result.data?.createLesson) {
+      return result.data.createLesson
+    }
   } catch(e) {
     console.error(e)
   }
@@ -66,13 +67,15 @@ export const createLesson: CreateLesson = async (input, progressCallback) => {
 
 export const getLesson: GetLesson = async (id) => {
   try {
-    const { data } = (
-      await API.graphql(graphqlOperation(getLessonGQL, { input: id })) 
+    const queryVariables: GetLessonQueryVariables = { id }
+    const result = (
+      await API.graphql(graphqlOperation(getLessonGQL, queryVariables)) 
     ) as GraphQLResult<GetLessonQuery>
-    return ({
-      id: data?.getLesson?.id, 
-      title: data?.getLesson?.title, 
-      description: data?.getLesson?.description})
+
+    if (result.data?.getLesson){
+      return result.data.getLesson
+    }
+
   } catch(e) {
     console.error(e)
   }
@@ -81,16 +84,13 @@ export const getLesson: GetLesson = async (id) => {
 
 export const listLessons: ListLessons = async () => {
   try {
-    const { data } = (
+    const result = (
       await API.graphql(graphqlOperation(listLessonsGQL))
     ) as GraphQLResult<ListLessonsQuery>
 
-    const lessons = data?.listLessons?.items?.map((lesson): Lesson => ({
-      id: lesson?.id,
-      title: lesson?.title,
-      description: lesson?.description
-    }))
-    return lessons
+    if (result.data?.listLessons?.items){
+      return result.data.listLessons.items
+    } 
   } catch(e) {
     console.error(e)
   }
@@ -99,11 +99,11 @@ export const listLessons: ListLessons = async () => {
 
 // TODO: Try catch block and handle error here.
 
-export const getLessonThumbnail = async (id: string) => {
+export const getLessonThumbnail: GetS3SignedUrl = async (id: string) => {
   const region = config.aws_project_region
   Storage.configure({
     AWSS3: {
-      bucket: videoConfig.awsOutputVideo,
+      bucket: lessonStreamConfig.awsOutputVideo,
       region,
       customPrefix: {
         public: '',
@@ -111,19 +111,23 @@ export const getLessonThumbnail = async (id: string) => {
     },
   })
   const signedUrl = await Storage.get(`${id}/${id}_thumbnail.0000000.jpg`)
+  console.log(signedUrl)
 
   return signedUrl
 }
 
-
-/* TODO: Work out how to use a transform for different types
-const transformData = (data: GetLessonQuery | CreateLessonInput): Lesson => {
-  const key = Object.keys(data)[0]
-
-  return ({
-    id: data[key as keyof (GetLessonQuery | CreateLessonInput)].id,
-    title: data.[key].title,
-    description: data.[key].description
-  })
+export const getLessonVideo: GetS3SignedUrl = async (id) => {
+  const region = config.aws_project_region
+    Storage.configure({
+      AWSS3: {
+        bucket: lessonStreamConfig.awsOutputVideo,
+        region,
+        customPrefix: {
+          public: '',
+        },
+      },
+    })
+    const signedUrl = await Storage.get(`${id}/${id}.m3u8`)
+    
+    return signedUrl
 }
-*/

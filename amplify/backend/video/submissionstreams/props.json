@@ -1,0 +1,11 @@
+{
+    "shared": {
+        "resourceName": "submissionstreams"
+    },
+    "template": {
+        "name": "Amplify_Video_HLS.json"
+    },
+    "contentDeliveryNetwork": {
+        "enableDistribution": false
+    }
+}

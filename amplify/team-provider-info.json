@@ -18,6 +18,9 @@
       "video": {
         "lessonstreams": {
           "s3UUID": "znh4pg70"
+        },
+        "submissionstreams": {
+          "s3UUID": "tdi97lj5"
         }
       }
     }

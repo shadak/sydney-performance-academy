@@ -66,6 +66,11 @@
       "service": "video",
       "serviceType": "video-on-demand",
       "providerPlugin": "awscloudformation"
+    },
+    "submissionstreams": {
+      "service": "video",
+      "serviceType": "video-on-demand",
+      "providerPlugin": "awscloudformation"
     }
   },
   "function": {
