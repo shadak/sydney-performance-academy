@@ -1,10 +1,9 @@
 /** @jsx jsx */
 import React from 'react'
 import usePromiseSuspense from '../hooks/usePromiseSuspense'
-import { getLessonThumbnail, Lesson } from '~/api/lesson'
+import { getLessonThumbnailURL, Lesson } from '~/api/lesson'
 import { css, jsx } from '@emotion/react'
 import { Link } from '@reach/router'
-
 
 interface LessonPreviewProps {
   lesson: Lesson
@@ -14,12 +13,12 @@ const LessonPreview: React.FC<LessonPreviewProps> = (props) => {
   const { lesson } = props
   let url: string | undefined
   if (lesson.id) {
-    url = usePromiseSuspense(getLessonThumbnail, [lesson.id])
+    url = usePromiseSuspense(getLessonThumbnailURL, [lesson.id])
   }
 
   return (
     <div>
-      <img src={url} css={imageStyle}/>
+      <img src={url} css={imageStyle} />
       <Link to={`/lesson/${lesson.id}`}>{lesson.title}</Link>
       <div>{lesson.description}</div>
     </div>
@@ -29,7 +28,7 @@ const LessonPreview: React.FC<LessonPreviewProps> = (props) => {
 export const LessonPreviewFallback: React.FC = () => {
   return (
     <div>
-      <div css={placeholderStyle}/>
+      <div css={placeholderStyle} />
     </div>
   )
 }
@@ -43,7 +42,7 @@ const placeholderStyle = css`
 const imageStyle = css`
   width: 400px;
   height: 200px;
-  background-color:gray;
+  background-color: gray;
 `
 
 export default LessonPreview

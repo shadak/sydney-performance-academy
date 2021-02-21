@@ -107,6 +107,32 @@ export type DeleteSubmissionInput = {
   id?: string | null,
 };
 
+export type CreateFeedbackInput = {
+  id?: string | null,
+  owner?: string | null,
+  message: string,
+  submissionId: string,
+};
+
+export type ModelfeedbackConditionInput = {
+  message?: ModelStringInput | null,
+  submissionId?: ModelIDInput | null,
+  and?: Array< ModelfeedbackConditionInput | null > | null,
+  or?: Array< ModelfeedbackConditionInput | null > | null,
+  not?: ModelfeedbackConditionInput | null,
+};
+
+export type UpdateFeedbackInput = {
+  id: string,
+  owner?: string | null,
+  message?: string | null,
+  submissionId?: string | null,
+};
+
+export type DeleteFeedbackInput = {
+  id?: string | null,
+};
+
 export type ModellessonFilterInput = {
   id?: ModelIDInput | null,
   title?: ModelStringInput | null,
@@ -126,6 +152,16 @@ export type ModelsubmissionFilterInput = {
   not?: ModelsubmissionFilterInput | null,
 };
 
+export type ModelfeedbackFilterInput = {
+  id?: ModelIDInput | null,
+  owner?: ModelStringInput | null,
+  message?: ModelStringInput | null,
+  submissionId?: ModelIDInput | null,
+  and?: Array< ModelfeedbackFilterInput | null > | null,
+  or?: Array< ModelfeedbackFilterInput | null > | null,
+  not?: ModelfeedbackFilterInput | null,
+};
+
 export type CreateLessonMutationVariables = {
   input: CreateLessonInput,
   condition?: ModellessonConditionInput | null,
@@ -138,10 +174,6 @@ export type CreateLessonMutation = {
     title: string,
     description: string,
     userpools: Array< string | null > | null,
-    submissions:  {
-      __typename: "ModelsubmissionConnection",
-      nextToken: string | null,
-    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -199,6 +231,15 @@ export type CreateSubmissionMutation = {
     __typename: "submission",
     id: string,
     owner: string | null,
+    feedback:  {
+      __typename: "feedback",
+      id: string,
+      owner: string | null,
+      message: string,
+      submissionId: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     lessonId: string,
     createdAt: string,
     updatedAt: string,
@@ -215,6 +256,15 @@ export type UpdateSubmissionMutation = {
     __typename: "submission",
     id: string,
     owner: string | null,
+    feedback:  {
+      __typename: "feedback",
+      id: string,
+      owner: string | null,
+      message: string,
+      submissionId: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     lessonId: string,
     createdAt: string,
     updatedAt: string,
@@ -231,7 +281,67 @@ export type DeleteSubmissionMutation = {
     __typename: "submission",
     id: string,
     owner: string | null,
+    feedback:  {
+      __typename: "feedback",
+      id: string,
+      owner: string | null,
+      message: string,
+      submissionId: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     lessonId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateFeedbackMutationVariables = {
+  input: CreateFeedbackInput,
+  condition?: ModelfeedbackConditionInput | null,
+};
+
+export type CreateFeedbackMutation = {
+  createFeedback:  {
+    __typename: "feedback",
+    id: string,
+    owner: string | null,
+    message: string,
+    submissionId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateFeedbackMutationVariables = {
+  input: UpdateFeedbackInput,
+  condition?: ModelfeedbackConditionInput | null,
+};
+
+export type UpdateFeedbackMutation = {
+  updateFeedback:  {
+    __typename: "feedback",
+    id: string,
+    owner: string | null,
+    message: string,
+    submissionId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteFeedbackMutationVariables = {
+  input: DeleteFeedbackInput,
+  condition?: ModelfeedbackConditionInput | null,
+};
+
+export type DeleteFeedbackMutation = {
+  deleteFeedback:  {
+    __typename: "feedback",
+    id: string,
+    owner: string | null,
+    message: string,
+    submissionId: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -248,10 +358,6 @@ export type GetLessonQuery = {
     title: string,
     description: string,
     userpools: Array< string | null > | null,
-    submissions:  {
-      __typename: "ModelsubmissionConnection",
-      nextToken: string | null,
-    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -288,6 +394,15 @@ export type GetSubmissionQuery = {
     __typename: "submission",
     id: string,
     owner: string | null,
+    feedback:  {
+      __typename: "feedback",
+      id: string,
+      owner: string | null,
+      message: string,
+      submissionId: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     lessonId: string,
     createdAt: string,
     updatedAt: string,
@@ -308,6 +423,44 @@ export type ListSubmissionsQuery = {
       id: string,
       owner: string | null,
       lessonId: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
+export type GetFeedbackQueryVariables = {
+  id: string,
+};
+
+export type GetFeedbackQuery = {
+  getFeedback:  {
+    __typename: "feedback",
+    id: string,
+    owner: string | null,
+    message: string,
+    submissionId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListFeedbacksQueryVariables = {
+  filter?: ModelfeedbackFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListFeedbacksQuery = {
+  listFeedbacks:  {
+    __typename: "ModelfeedbackConnection",
+    items:  Array< {
+      __typename: "feedback",
+      id: string,
+      owner: string | null,
+      message: string,
+      submissionId: string,
       createdAt: string,
       updatedAt: string,
     } | null > | null,
@@ -372,6 +525,15 @@ export type OnCreateSubmissionSubscription = {
     __typename: "submission",
     id: string,
     owner: string | null,
+    feedback:  {
+      __typename: "feedback",
+      id: string,
+      owner: string | null,
+      message: string,
+      submissionId: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     lessonId: string,
     createdAt: string,
     updatedAt: string,
@@ -387,6 +549,15 @@ export type OnUpdateSubmissionSubscription = {
     __typename: "submission",
     id: string,
     owner: string | null,
+    feedback:  {
+      __typename: "feedback",
+      id: string,
+      owner: string | null,
+      message: string,
+      submissionId: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     lessonId: string,
     createdAt: string,
     updatedAt: string,
@@ -402,7 +573,64 @@ export type OnDeleteSubmissionSubscription = {
     __typename: "submission",
     id: string,
     owner: string | null,
+    feedback:  {
+      __typename: "feedback",
+      id: string,
+      owner: string | null,
+      message: string,
+      submissionId: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     lessonId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateFeedbackSubscriptionVariables = {
+  owner?: string | null,
+};
+
+export type OnCreateFeedbackSubscription = {
+  onCreateFeedback:  {
+    __typename: "feedback",
+    id: string,
+    owner: string | null,
+    message: string,
+    submissionId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateFeedbackSubscriptionVariables = {
+  owner?: string | null,
+};
+
+export type OnUpdateFeedbackSubscription = {
+  onUpdateFeedback:  {
+    __typename: "feedback",
+    id: string,
+    owner: string | null,
+    message: string,
+    submissionId: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteFeedbackSubscriptionVariables = {
+  owner?: string | null,
+};
+
+export type OnDeleteFeedbackSubscription = {
+  onDeleteFeedback:  {
+    __typename: "feedback",
+    id: string,
+    owner: string | null,
+    message: string,
+    submissionId: string,
     createdAt: string,
     updatedAt: string,
   } | null,

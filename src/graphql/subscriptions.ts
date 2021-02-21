@@ -2,7 +2,7 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onCreateLessonGQL = /* GraphQL */ `
+export const onCreateLessonGQLGQL = /* GraphQL */ `
   subscription OnCreateLesson {
     onCreateLesson {
       id
@@ -17,7 +17,7 @@ export const onCreateLessonGQL = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateLessonGQL = /* GraphQL */ `
+export const onUpdateLessonGQLGQL = /* GraphQL */ `
   subscription OnUpdateLesson {
     onUpdateLesson {
       id
@@ -32,7 +32,7 @@ export const onUpdateLessonGQL = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteLessonGQL = /* GraphQL */ `
+export const onDeleteLessonGQLGQL = /* GraphQL */ `
   subscription OnDeleteLesson {
     onDeleteLesson {
       id
@@ -52,6 +52,14 @@ export const onCreateSubmissionGQL = /* GraphQL */ `
     onCreateSubmission(owner: $owner) {
       id
       owner
+      feedback {
+        id
+        owner
+        message
+        submissionId
+        createdAt
+        updatedAt
+      }
       lessonId
       createdAt
       updatedAt
@@ -63,6 +71,14 @@ export const onUpdateSubmissionGQL = /* GraphQL */ `
     onUpdateSubmission(owner: $owner) {
       id
       owner
+      feedback {
+        id
+        owner
+        message
+        submissionId
+        createdAt
+        updatedAt
+      }
       lessonId
       createdAt
       updatedAt
@@ -74,7 +90,51 @@ export const onDeleteSubmissionGQL = /* GraphQL */ `
     onDeleteSubmission(owner: $owner) {
       id
       owner
+      feedback {
+        id
+        owner
+        message
+        submissionId
+        createdAt
+        updatedAt
+      }
       lessonId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateFeedbackGQL = /* GraphQL */ `
+  subscription OnCreateFeedback($owner: String) {
+    onCreateFeedback(owner: $owner) {
+      id
+      owner
+      message
+      submissionId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateFeedbackGQL = /* GraphQL */ `
+  subscription OnUpdateFeedback($owner: String) {
+    onUpdateFeedback(owner: $owner) {
+      id
+      owner
+      message
+      submissionId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteFeedbackGQL = /* GraphQL */ `
+  subscription OnDeleteFeedback($owner: String) {
+    onDeleteFeedback(owner: $owner) {
+      id
+      owner
+      message
+      submissionId
       createdAt
       updatedAt
     }

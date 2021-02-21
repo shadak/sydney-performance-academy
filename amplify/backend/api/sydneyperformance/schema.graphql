@@ -24,5 +24,21 @@ type submission @model
 {
   id: ID!
   owner: String
+  feedback: feedback
   lessonId: ID!
+}
+
+type feedback @model
+@auth(
+  rules: [
+    { allow: groups, groups:["Admin"], operations: [create, update, delete, read] },
+    { allow: owner, ownerField: "owner", operations: [read] }
+  ]
+)
+@key(name: "bySubmission", fields: ["submissionId"])
+{
+  id: ID!
+  owner: String
+  message: String!
+  submissionId: ID!
 }

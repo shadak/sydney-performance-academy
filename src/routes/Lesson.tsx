@@ -1,7 +1,6 @@
 import React, { Suspense, useState } from 'react'
 import { RouteComponentProps } from '@reach/router'
 import LessonPlayer, { LessonPlayerFallback } from '../components/LessonPlayer'
-import SubmissionPlayer, { SubmissionPlayerFallback } from '../components/SubmissionPlayer'
 import useFileInput from '~/hooks/useFileInput'
 import { createSubmission } from '~/api/submission'
 
@@ -40,11 +39,6 @@ const Lesson: React.FC<LessonRouteProps> = ({ lessonId }) => {
           Upload
         </button>
       </form>
-      {subVisible &&
-        <Suspense fallback={<SubmissionPlayerFallback/>}>
-          <SubmissionPlayer lessonId={lessonId} />
-        </Suspense>
-      }
     </>
   )
 }

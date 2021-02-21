@@ -41,6 +41,14 @@ export const getSubmissionGQL = /* GraphQL */ `
     getSubmission(id: $id) {
       id
       owner
+      feedback {
+        id
+        owner
+        message
+        submissionId
+        createdAt
+        updatedAt
+      }
       lessonId
       createdAt
       updatedAt
@@ -58,6 +66,37 @@ export const listSubmissionsGQL = /* GraphQL */ `
         id
         owner
         lessonId
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getFeedbackGQL = /* GraphQL */ `
+  query GetFeedback($id: ID!) {
+    getFeedback(id: $id) {
+      id
+      owner
+      message
+      submissionId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listFeedbacksGQL = /* GraphQL */ `
+  query ListFeedbacks(
+    $filter: ModelfeedbackFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listFeedbacks(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        owner
+        message
+        submissionId
         createdAt
         updatedAt
       }

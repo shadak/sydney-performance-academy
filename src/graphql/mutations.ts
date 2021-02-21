@@ -12,9 +12,6 @@ export const createLessonGQL = /* GraphQL */ `
       title
       description
       userpools
-      submissions {
-        nextToken
-      }
       createdAt
       updatedAt
     }
@@ -64,6 +61,14 @@ export const createSubmissionGQL = /* GraphQL */ `
     createSubmission(input: $input, condition: $condition) {
       id
       owner
+      feedback {
+        id
+        owner
+        message
+        submissionId
+        createdAt
+        updatedAt
+      }
       lessonId
       createdAt
       updatedAt
@@ -78,6 +83,14 @@ export const updateSubmissionGQL = /* GraphQL */ `
     updateSubmission(input: $input, condition: $condition) {
       id
       owner
+      feedback {
+        id
+        owner
+        message
+        submissionId
+        createdAt
+        updatedAt
+      }
       lessonId
       createdAt
       updatedAt
@@ -92,7 +105,60 @@ export const deleteSubmissionGQL = /* GraphQL */ `
     deleteSubmission(input: $input, condition: $condition) {
       id
       owner
+      feedback {
+        id
+        owner
+        message
+        submissionId
+        createdAt
+        updatedAt
+      }
       lessonId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createFeedbackGQL = /* GraphQL */ `
+  mutation CreateFeedback(
+    $input: CreateFeedbackInput!
+    $condition: ModelfeedbackConditionInput
+  ) {
+    createFeedback(input: $input, condition: $condition) {
+      id
+      owner
+      message
+      submissionId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateFeedbackGQL = /* GraphQL */ `
+  mutation UpdateFeedback(
+    $input: UpdateFeedbackInput!
+    $condition: ModelfeedbackConditionInput
+  ) {
+    updateFeedback(input: $input, condition: $condition) {
+      id
+      owner
+      message
+      submissionId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteFeedbackGQL = /* GraphQL */ `
+  mutation DeleteFeedback(
+    $input: DeleteFeedbackInput!
+    $condition: ModelfeedbackConditionInput
+  ) {
+    deleteFeedback(input: $input, condition: $condition) {
+      id
+      owner
+      message
+      submissionId
       createdAt
       updatedAt
     }
