@@ -1,9 +1,9 @@
 import React, { createContext, useEffect } from 'react'
-import { getLesson, LessonList, listLessonsThunk } from '~/api/lesson'
+import { initLessonsThunk, Lesson, LessonList } from '~/api/lesson'
 import useThunkReducer, { ThunkDispatch } from '~/hooks/useThunkReducer'
 import lessonsReducer, { LessonsAction } from './reducers'
 
-export type LessonsState = Exclude<LessonList, null>
+export type LessonsState = Lesson[]
 
 const initialState: LessonsState = []
 
@@ -16,7 +16,7 @@ const LessonsProvider: React.FC = ({ children }) => {
   const [state, dispatch] = useThunkReducer(lessonsReducer, initialState)
 
   useEffect(() => {
-    dispatch(listLessonsThunk)
+    dispatch(initLessonsThunk)
   }, [])
 
   return (

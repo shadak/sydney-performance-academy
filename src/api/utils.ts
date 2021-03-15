@@ -1,15 +1,21 @@
-import { LessonsAction } from './../context/lessons/reducers';
 import { Dispatch } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { GraphQLResult } from '@aws-amplify/api'
 import { curry, prop } from 'ramda'
+import { Either, Just, Maybe, MaybeAsync } from 'purify-ts'
+import { listLessonsGQL } from '~/graphql/queries'
 
 export interface SPAGraphQLResult<T> extends GraphQLResult<T> {
   [index: string]: any
 }
-
+/*
 export const graphql = <T, U extends object>(gql: string) => (variables: T) =>
   API.graphql(graphqlOperation(gql, variables)) as Promise<GraphQLResult<U>>
+*/
+
+export interface GraphQL {
+  <T, U>(gql: string): (variables: T) => Promise<Maybe<GraphQLResult<U>>>
+}
 
 const extractProp = curry(prop)
 
@@ -19,35 +25,55 @@ export const extractResult = (queryName: string) => (obj: any) =>
   extractProp(queryName)(obj)
 export const extractItems = (obj: any) => extractProp('items')(obj)
 
-export interface Handler<T,U> {
+export type Get<T, U extends object> = (
+  input: T
+) => MaybeAsync<GraphQLResult<U>>
+
+export interface Action {
+  type: string
+  payload: object | object[] | string
+}
+export interface CreateAction<T extends Object, U extends Action> {
   (result: T): U
 }
 
-export interface ResultHandler {
-  <T,U>(errorHandler: Handler<any[]|undefined,U>): {
-    (dataHandler: Handler<T,U>): {
-      (result: GraphQLResult<T>): U
-    }
-  }
-}
+export type GQLError = string
 
-export const handleResult: ResultHandler = (handleError) => (handleData) => (
-  result
-) => result.data ? handleData(result.data) : handleError(result.errors)
-
-export const handleGenericError: Handler<any[] | undefined, LessonsAction> = (result) => ({
-  type: 'ERROR'
-})
-
-export type Getter<T,U> = (input: T) => Promise<GraphQLResult<U>>
-
-export interface ThunkCreator {
-  <T,U,V>(getch: Getter<T,U>): {
-    (handler: Handler<GraphQLResult<U>, V>): {
-      (input: T): {
-        (dispatch: Dispatch<V>): void
+export interface CreateThunk {
+  <T, U extends object, V extends Action>(get: Get<T, U>): {
+    (errorCreator: CreateAction<GQLError, V>): {
+      (actionCreator: CreateAction<U, V>): {
+        (input: T): {
+          (dispatch: Dispatch<V>): void
+        }
       }
     }
   }
 }
-export const createThunk: ThunkCreator = (get) => (handler) => (input) => (dispatch) => get(input).then(handler).then(dispatch)
+
+export const graphql = <T, U extends object>(gql: string) => (variables: T) =>
+  MaybeAsync.fromPromise<GraphQLResult<U>>(async () => {
+    const result = (await API.graphql(
+      graphqlOperation(gql, variables)
+    )) as GraphQLResult<U>
+    return Maybe.of(result)
+  })
+
+/*
+  const result = await API.graphql(graphqlOperation(gql, variables)) as GraphQLResult<U>
+  return Maybe.of(result)
+}
+*/
+export const createThunk = <T, U extends object, V extends Action>(
+  get: Get<T, U>
+) => (createError: CreateAction<GQLError, V>) => (
+  createAction: CreateAction<U, V>
+) => (input: T) => (dispatch: Dispatch<V>) =>
+  get(input).then((result) =>
+    result
+      .map((result) => result.data)
+      .toEither('GraphQL Error')
+      .map((data) => data as U)
+      .bimap(createError, createAction)
+      .map(dispatch)
+  )

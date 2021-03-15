@@ -1,23 +1,31 @@
+import { GraphQLResult } from '@aws-amplify/api'
 import { LessonsAction } from './../context/lessons/reducers'
+import { graphql, CreateAction, GQLError } from './utils'
 import {
-  graphql,
-  extractResult,
-  extractData,
-} from './utils'
-import { createLessonGQL } from './../graphql/mutations'
-import {
+  createLessonGQL,
+  deleteLessonGQL,
+  updateLessonGQL,
+} from './../graphql/mutations'
+import { getLessonGQL, listLessonsGQL } from './../graphql/queries'
+import type {
   CreateLessonMutation,
   CreateLessonMutationVariables,
+  DeleteLessonMutation,
+  DeleteLessonMutationVariables,
   GetLessonQuery,
   GetLessonQueryVariables,
   ListLessonsQuery,
+  UpdateLessonMutation,
+  UpdateLessonMutationVariables,
 } from './API'
-import { getLessonGQL, listLessonsGQL } from './../graphql/queries'
 import { Storage } from 'aws-amplify'
 import { lessonStreamConfig } from '../aws-video-exports'
 import config from '../aws-exports'
-import { pipe } from 'ramda'
-import { handleResult, Handler, handleGenericError, createThunk } from './utils'
+import { createThunk } from './utils'
+import { Maybe } from 'purify-ts'
+
+export type GraphQLPromise<T> = Promise<Maybe<GraphQLResult<T>>>
+export type CreateLessonsAction<T> = CreateAction<T, LessonsAction>
 
 export type Lesson = Exclude<GetLessonQuery['getLesson'], null>
 export type LessonList = Exclude<
@@ -29,62 +37,111 @@ export type LessonList = Exclude<
  * CREATE LESSON
  */
 
-const handleCreateLessonData: Handler<CreateLessonMutation, LessonsAction> = (
-  result
-) => ({
-  type: 'CREATE',
-  payload: result.createLesson as Lesson,
-})
-
-const handleCreateLessonResult = handleResult<
-  CreateLessonMutation,
-  LessonsAction
->(handleGenericError)(handleCreateLessonData)
-
 const createLesson = (input: CreateLessonMutationVariables) =>
   graphql<CreateLessonMutationVariables, CreateLessonMutation>(createLessonGQL)(
     input
   )
 
+const createCreateLessonAction: CreateAction<
+  CreateLessonMutation,
+  LessonsAction
+> = (result) => ({
+  type: 'CREATE',
+  payload: result.createLesson as Lesson,
+})
+
+const createLessonFetchError: CreateLessonsAction<GQLError> = (error) => ({
+  type: 'ERROR',
+  payload: error,
+})
+
 export const createLessonThunk = createThunk<
   CreateLessonMutationVariables,
   CreateLessonMutation,
   LessonsAction
->(createLesson)(handleCreateLessonResult)
+>(createLesson)(createLessonFetchError)(createCreateLessonAction)
+
+/**
+ * UPDATE LESSON
+ */
+
+const updateLesson = (input: UpdateLessonMutationVariables) =>
+  graphql<UpdateLessonMutationVariables, UpdateLessonMutation>(updateLessonGQL)(
+    input
+  )
+
+const createUpdateLessonAction: CreateLessonsAction<UpdateLessonMutation> = (
+  result
+) => ({
+  type: 'UPDATE',
+  payload: result.updateLesson as Lesson,
+})
+
+export const updateLessonThunk = createThunk<
+  UpdateLessonMutationVariables,
+  UpdateLessonMutation,
+  LessonsAction
+>(updateLesson)(createLessonFetchError)(createUpdateLessonAction)
+
+/**
+ * DELETE LESSON
+ */
+
+const deleteLesson = (input: DeleteLessonMutationVariables) =>
+  graphql<DeleteLessonMutationVariables, DeleteLessonMutation>(deleteLessonGQL)(
+    input
+  )
+
+const createDeleteLessonAction: CreateLessonsAction<DeleteLessonMutation> = (
+  result
+) => ({
+  type: 'DELETE',
+  payload: result.deleteLesson as Lesson,
+})
+
+export const deleteLessonThunk = createThunk<
+  DeleteLessonMutationVariables,
+  DeleteLessonMutation,
+  LessonsAction
+>(deleteLesson)(createLessonFetchError)(createDeleteLessonAction)
 
 /**
  * GET LESSON
- * TODO: ThunkCreator
  */
 
-const extractLesson = pipe(extractData, extractResult('getLesson'))
-export const getLesson = pipe(
-  graphql<GetLessonQueryVariables, CreateLessonMutation>(getLessonGQL),
-  extractLesson
-)
+const getLesson = (input: GetLessonQueryVariables) =>
+  graphql<GetLessonQueryVariables, GetLessonQuery>(getLessonGQL)(input)
+
+const createGetLessonAction: CreateLessonsAction<GetLessonQuery> = (
+  result
+) => ({
+  type: 'UPDATE',
+  payload: result.getLesson as Lesson,
+})
+
+export const getLessonThunk = createThunk<
+  GetLessonQueryVariables,
+  GetLessonQuery,
+  LessonsAction
+>(getLesson)(createLessonFetchError)(createGetLessonAction)
 
 /**
- * LIST LESSONS
+ * INIT LESSONS
  */
 
-const listLessons = () =>
+const initLessons = () =>
   graphql<undefined, ListLessonsQuery>(listLessonsGQL)(undefined)
-const handleListLessonsData: Handler<ListLessonsQuery, LessonsAction> = (
+const createInitLessonsAction: CreateLessonsAction<ListLessonsQuery> = (
   result
 ) => ({
   type: 'INIT',
-  payload: result.listLessons?.items as Lesson[],
+  payload: (result.listLessons?.items as Lesson[]) || [],
 })
-
-const handleListLessonsResult = handleResult<ListLessonsQuery, LessonsAction>(
-  handleGenericError
-)(handleListLessonsData)
-
-export const listLessonsThunk = createThunk<
+export const initLessonsThunk = createThunk<
   undefined,
   ListLessonsQuery,
   LessonsAction
->(listLessons)(handleListLessonsResult)(undefined)
+>(initLessons)(createLessonFetchError)(createInitLessonsAction)(undefined)
 
 /**
  * STORAGE
@@ -121,5 +178,3 @@ export const getLessonThumbnailURL = (id: string) =>
 
 export const getLessonVideoUrl = (id: string) =>
   createLessonDownloadAction(`${id}/${id}.m3u8`)
-
-
